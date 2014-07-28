@@ -10,6 +10,7 @@
 //#import "HITorManager.h"
 #import "GCDAsyncProxySocket.h"
 //#import "GCDAsyncWrapperSocket.h"
+#import "OnionKit.h"
 
 NSString * const kHITorManagerIsRunningKey = @"isRunning";
 NSString * const CONNECTING_STRING = @"Connecting to Tor...";
@@ -31,9 +32,9 @@ uint16_t const kTorCheckPort = 443;
 @implementation TORRootViewController
 @synthesize connectionStatusLabel, activityIndicatorView, connectButton, testButton;
 
-//- (void) dealloc {
-  //  [[HITorManager defaultManager] removeObserver:self forKeyPath:kHITorManagerIsRunningKey];
-//}
+- (void) dealloc {
+   [[OnionKit sharedInstance] removeObserver:self forKeyPath:kOnionKitStartedNotification];
+}
 
 - (id)init
 {
@@ -43,9 +44,9 @@ uint16_t const kTorCheckPort = 443;
         self.activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
         self.connectButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
         [self.connectButton addTarget:self action:@selector(connectButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-    //
+    
         
-        //[[HITorManager defaultManager] addObserver:self forKeyPath:kHITorManagerIsRunningKey options:NSKeyValueObservingOptionNew context:NULL];
+        [[OnionKit sharedInstance] addObserver:self forKeyPath:kOnionKitStartedNotification options:NSKeyValueObservingOptionNew context:NULL];
         self.testButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
         [self.testButton addTarget:self action:@selector(testButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     }
@@ -101,13 +102,13 @@ uint16_t const kTorCheckPort = 443;
     }
     self.connectButton.enabled = NO;
     self.connectionStatusLabel.textColor = [UIColor orangeColor];
-   /* if (![HITorManager defaultManager].isRunning) {
+    if (![OnionKit sharedInstance].isRunning) {
         self.connectionStatusLabel.text = CONNECTING_STRING;
-        [[HITorManager defaultManager] start];
+        [[OnionKit sharedInstance] start];
     } else {
         self.connectionStatusLabel.text = DISCONNECTING_STRING;
-        [[HITorManager defaultManager] stop];
-   } */
+        [[OnionKit sharedInstance  ] stop];
+   }
 
 }
 
