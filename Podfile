@@ -2,10 +2,10 @@
 # platform :ios, "6.0"
 
 target "OnionKit" do
-pod 'ASIHTTPRequest'
-pod 'ProxyKit'
+pod 'CocoaLumberjack'
 end
 
 target "OnionKitTest" do
+
 end
 

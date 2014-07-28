@@ -1,46 +1,14 @@
 PODS:
-  - ASIHTTPRequest (1.8.2):
-    - ASIHTTPRequest/ASIWebPageRequest
-    - ASIHTTPRequest/CloudFiles
-    - ASIHTTPRequest/Core
-    - ASIHTTPRequest/S3
-  - ASIHTTPRequest/ASIWebPageRequest (1.8.2):
-    - ASIHTTPRequest/Core
-  - ASIHTTPRequest/CloudFiles (1.8.2):
-    - ASIHTTPRequest/Core
-  - ASIHTTPRequest/Core (1.8.2):
-    - Reachability
-  - ASIHTTPRequest/S3 (1.8.2):
-    - ASIHTTPRequest/Core
-  - CocoaAsyncSocket (7.3.5)
   - CocoaLumberjack (1.9.1):
     - CocoaLumberjack/Extensions
   - CocoaLumberjack/Core (1.9.1)
   - CocoaLumberjack/Extensions (1.9.1):
     - CocoaLumberjack/Core
-  - ProxyKit (1.0.2):
-    - ProxyKit/standard
-  - ProxyKit/Client (1.0.2):
-    - ProxyKit/common
-  - ProxyKit/common (1.0.2):
-    - CocoaAsyncSocket (~> 7.3)
-    - CocoaLumberjack (~> 1.9)
-  - ProxyKit/Server (1.0.2):
-    - ProxyKit/common
-  - ProxyKit/standard (1.0.2):
-    - ProxyKit/Client
-    - ProxyKit/Server
-  - Reachability (3.1.1)
 
 DEPENDENCIES:
-  - ASIHTTPRequest
-  - ProxyKit
+  - CocoaLumberjack
 
 SPEC CHECKSUMS:
-  ASIHTTPRequest: 2c8335b49410c0e2ad42829c438e74d454b77590
-  CocoaAsyncSocket: 45bdbbc1c0a5ed0640ff4c42af325ba43a2f099a
   CocoaLumberjack: 94accd5749f5c5d15134c8d50f34a973aed8ef69
-  ProxyKit: 5d06e7e710da8f5fb85e5727f3c7e9a55821b95b
-  Reachability: 8e9635e3cb4f98e7f825e51147f677ecc694d0e7
 
 COCOAPODS: 0.33.1
