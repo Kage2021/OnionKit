@@ -7,7 +7,7 @@
 //
 
 #import "TORRootViewController.h"
-#import "HITorManager.h"
+//#import "HITorManager.h"
 #import "GCDAsyncProxySocket.h"
 //#import "GCDAsyncWrapperSocket.h"
 
@@ -31,9 +31,9 @@ uint16_t const kTorCheckPort = 443;
 @implementation TORRootViewController
 @synthesize connectionStatusLabel, activityIndicatorView, connectButton, testButton;
 
-- (void) dealloc {
-    [[HITorManager defaultManager] removeObserver:self forKeyPath:kHITorManagerIsRunningKey];
-}
+//- (void) dealloc {
+  //  [[HITorManager defaultManager] removeObserver:self forKeyPath:kHITorManagerIsRunningKey];
+//}
 
 - (id)init
 {
@@ -43,7 +43,9 @@ uint16_t const kTorCheckPort = 443;
         self.activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
         self.connectButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
         [self.connectButton addTarget:self action:@selector(connectButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-        [[HITorManager defaultManager] addObserver:self forKeyPath:kHITorManagerIsRunningKey options:NSKeyValueObservingOptionNew context:NULL];
+    //
+        
+        //[[HITorManager defaultManager] addObserver:self forKeyPath:kHITorManagerIsRunningKey options:NSKeyValueObservingOptionNew context:NULL];
         self.testButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
         [self.testButton addTarget:self action:@selector(testButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     }
@@ -99,13 +101,14 @@ uint16_t const kTorCheckPort = 443;
     }
     self.connectButton.enabled = NO;
     self.connectionStatusLabel.textColor = [UIColor orangeColor];
-    if (![HITorManager defaultManager].isRunning) {
+   /* if (![HITorManager defaultManager].isRunning) {
         self.connectionStatusLabel.text = CONNECTING_STRING;
         [[HITorManager defaultManager] start];
     } else {
         self.connectionStatusLabel.text = DISCONNECTING_STRING;
         [[HITorManager defaultManager] stop];
-    }
+   } */
+
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath

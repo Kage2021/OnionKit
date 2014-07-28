@@ -210,7 +210,7 @@ NSString * const kOnionKitStoppedNotification = @"kOnionKitStoppedNotification";
     
     /* Set up our buckets */
     connection_bucket_init();
-#ifndef USE_BUFFEREVENTS
+#ifdef USE_BUFFEREVENTS
     stats_prev_global_read_bucket = global_read_bucket;
     stats_prev_global_write_bucket = global_write_bucket;
 #endif
@@ -259,7 +259,7 @@ NSString * const kOnionKitStoppedNotification = @"kOnionKitStoppedNotification";
         tor_assert(second_timer);
     }
     
-#ifndef USE_BUFFEREVENTS
+#ifdef USE_BUFFEREVENTS
     if (!refill_timer) {
         struct timeval refill_interval;
         int msecs = get_options()->TokenBucketRefillInterval;
