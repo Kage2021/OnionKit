@@ -7,9 +7,7 @@
 //
 
 #import "TORRootViewController.h"
-//#import "HITorManager.h"
 #import "GCDAsyncProxySocket.h"
-//#import "GCDAsyncWrapperSocket.h"
 #import "OnionKit.h"
 
 NSString * const kHITorManagerIsRunningKey = @"isRunning";
@@ -116,7 +114,7 @@ uint16_t const kTorCheckPort = 443;
                       ofObject:(id)object
                         change:(NSDictionary *)change
                        context:(void *)context {
-    if ([keyPath isEqual:kHITorManagerIsRunningKey]) {
+    if ([keyPath isEqual:kOnionKitStartedNotification]) {
         BOOL isRunning = [[change objectForKey:NSKeyValueChangeNewKey] boolValue];
         if (isRunning) {
             self.connectionStatusLabel.text = CONNECTED_STRING;
