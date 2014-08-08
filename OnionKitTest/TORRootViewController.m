@@ -55,10 +55,20 @@ uint16_t const kTorCheckPort = 443;
     self.socket = [[GCDAsyncProxySocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
     [self.socket setProxyHost:@"127.0.0.1" port:9050 version:GCDAsyncSocketSOCKSVersion5];
     NSError *error = NULL;
-    [self.socket connectToHost:kTorCheckHost onPort:kTorCheckPort error:&error];
+    
+    NSString *cookieLocationString = [NSString stringWithUTF8String:[OnionKit sharedInstance].cookieAuthFileLocation];
+     NSString *cookie = [[NSString alloc] initWithContentsOfFile:cookieLocationString encoding:NSUTF8StringEncoding error:nil];    
+    
+    [self.socket connectToHost:@"127.0.0.1" onPort:9150 error:&error];
     if (error) {
         NSLog(@"Error connecting to host %@", error.userInfo);
+        
     }
+     
+    NSDictionary *sslSettings = @{
+                                  @"Authenticate()" : [NSString stringWithFormat:(@"%@", cookie)]
+                                  };
+    [self.socket startTLS:sslSettings];
 }
 
 - (void)viewDidLoad
@@ -164,6 +174,9 @@ uint16_t const kTorCheckPort = 443;
 
 - (void) socket:(GCDAsyncSocket *)sock didWriteDataWithTag:(long)tag {
     NSLog(@"did write data %@ with tag %ld", sock, tag);
+
+    
+
 }
 
 - (void) socket:(GCDAsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag {
