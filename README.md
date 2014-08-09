@@ -1,5 +1,8 @@
 # OnionKit for iOS
 
+This fork of the OnionKit is going to be used in a Relay Application, which may later turn into more. It will implement things like a TOR controller for acute and intimate control over TOR. It will be more expansive, and TOR will likely be badly hacked in the process. To be forthcoming, I have little programming experience, and this should not be taken as a secure implementation of TOR. It is not. If that changes, I will change this. Also, I assume all of the following still applies: Below is the previous read me.
+
+
 Objective-C Tor Wrapper Framework for iOS. **Don't actually use this yet.** This project is based on [iOS-OnionBrowser](https://github.com/mtigas/iOS-OnionBrowser) and [Tor.framework](https://github.com/hivewallet/Tor.framework).
 
 To clone:

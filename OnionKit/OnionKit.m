@@ -75,9 +75,9 @@ NSString * const kOnionKitStoppedNotification = @"kOnionKitStoppedNotification";
         self.dataDirectoryURL = appSupportURL;
         NSLog(@"%@", [appSupportURL absoluteString]);
         
-        const char *cookieAuthFileDir = [[NSString stringWithFormat:@"%@/cookie_auth_file", _dataDirectoryURL.path] UTF8String];
-        self.cookieAuthFileLocation = cookieAuthFileDir;
-        NSLog(@"%s", cookieAuthFileLocation);
+        const char * cookieAuthFileDir = [[NSString stringWithFormat:@"%@/cookie_auth_file", _dataDirectoryURL.path] UTF8String];
+        self.cookieAuthFileLocation = [NSString stringWithUTF8String:cookieAuthFileDir];
+        NSLog(@"%@", self.cookieAuthFileLocation);
         
     }
     

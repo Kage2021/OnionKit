@@ -22,6 +22,7 @@ NSString * const TEST_STRING = @"Test";
 
 NSString * const kTorCheckHost = @"check.torproject.org";
 uint16_t const kTorCheckPort = 443;
+uint16_t const torControllerPort = 9150;
 
 @interface TORRootViewController ()
 @property (nonatomic, strong) GCDAsyncProxySocket *socket;
@@ -52,23 +53,38 @@ uint16_t const kTorCheckPort = 443;
 }
 
 - (void) testButtonPressed:(id)sender {
+    
+    //Start general TOR traffic socket on 9050
+    
     self.socket = [[GCDAsyncProxySocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
-    [self.socket setProxyHost:@"127.0.0.1" port:9050 version:GCDAsyncSocketSOCKSVersion5];
+    [self.socket setProxyHost:@"127.0.0.1" port:9150 version:GCDAsyncSocketSOCKSVersion5];
     NSError *error = NULL;
     
-    NSString *cookieLocationString = [NSString stringWithUTF8String:[OnionKit sharedInstance].cookieAuthFileLocation];
-     NSString *cookie = [[NSString alloc] initWithContentsOfFile:cookieLocationString encoding:NSUTF8StringEncoding error:nil];    
     
-    [self.socket connectToHost:@"127.0.0.1" onPort:9150 error:&error];
+    //try to get TOR auth_cookie_file for authenticating controller and setting up SSL settings
+    
+   
+     NSString *cookie = [[NSString alloc] initWithContentsOfFile:([OnionKit sharedInstance].cookieAuthFileLocation) encoding:NSASCIIStringEncoding error:&error];
+    if (error)
+    {
+    NSLog(@"Error initializing authcookie with cookie file: %@", error.userInfo);
+    error = NULL;
+    }
+    //setup dictionary that will be read to controller in order to authenticate us with the controller
+ //   NSString *asciiCookie = [NSString stringWithFormat:@"\"%@\"", cookie];
+    
+    NSDictionary *sslSettings = @{
+                                  @"Authenticate" : cookie,
+                                  };
+    
+    
+    [self.socket startTLS:sslSettings];
+    [self.socket connectToHost:@"127.0.0.1" onPort:torControllerPort withTimeout:(-5) error:&error];
     if (error) {
         NSLog(@"Error connecting to host %@", error.userInfo);
-        
     }
-     
-    NSDictionary *sslSettings = @{
-                                  @"Authenticate()" : [NSString stringWithFormat:(@"%@", cookie)]
-                                  };
-    [self.socket startTLS:sslSettings];
+        
+
 }
 
 - (void)viewDidLoad
@@ -147,7 +163,18 @@ uint16_t const kTorCheckPort = 443;
     // Dispose of any resources that can be recreated.
 }
 
+
 #pragma mark GCDAsyncSocketDelegate methods
+-(NSTimeInterval) socket:(GCDAsyncSocket *)sock shouldTimeoutReadWithTag:(long)tag elapsed:(NSTimeInterval)elapsed bytesDone:(NSUInteger)length
+{
+    NSTimeInterval *extension = NULL;
+    
+    if ((tag == 10100) || (tag == 10200))
+    {
+        *extension = 20;
+    }
+    return *extension;
+}
 
 - (void) socket:(GCDAsyncSocket *)sock didConnectToHost:(NSString *)host port:(uint16_t)port {
     NSLog(@"%@ connected to %@ on port %d", sock, host, port);
