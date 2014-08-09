@@ -21,7 +21,7 @@ extern NSString * const kOnionKitStoppedNotification; //<< Notification informin
 @property (nonatomic, assign) NSUInteger port;                                       //<< Sets a port for tor proxy server. Default is 9050
 @property (nonatomic, readonly, getter = isRunning) BOOL isRunning;                  //<< Flag informing that the server is currently running
 @property (nonatomic, copy) NSURL *dataDirectoryURL;                                 //<< Where the tor data should be kept
-
+@property (nonatomic) const char *cookieAuthFileLocation;
 /** Class method returning defult tor manager.
  *
  * Please not that you shouldn't been creating 

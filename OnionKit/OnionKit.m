@@ -24,6 +24,7 @@ const char tor_git_revision[] =
 #import "or/relay.h"
 #import "or/config.h"
 #import "or/control.h"
+
 #import "or/routerlist.h"
 #import "or/networkstatus.h"
 #import "or/cpuworker.h"
@@ -50,6 +51,7 @@ NSString * const kOnionKitStoppedNotification = @"kOnionKitStoppedNotification";
 @implementation OnionKit
 @synthesize port = _port;
 @synthesize dataDirectoryURL = _dataDirectoryURL;
+@synthesize cookieAuthFileLocation;
 
 + (OnionKit *)sharedInstance
 {
@@ -69,8 +71,13 @@ NSString * const kOnionKitStoppedNotification = @"kOnionKitStoppedNotification";
     if (self)
     {
         _port = 9050;
-        NSURL *appSupportURL = [[[[NSFileManager defaultManager] URLsForDirectory:NSApplicationSupportDirectory inDomains:NSUserDomainMask] lastObject] URLByAppendingPathComponent:@"com.Hive.Tor"];
+        NSURL *appSupportURL = [[[[NSFileManager defaultManager] URLsForDirectory:NSApplicationSupportDirectory inDomains:NSUserDomainMask] lastObject] URLByAppendingPathComponent:@"com.something.different"];
         self.dataDirectoryURL = appSupportURL;
+        NSLog(@"%@", [appSupportURL absoluteString]);
+        
+        const char *cookieAuthFileDir = [[NSString stringWithFormat:@"%@/cookie_auth_file", _dataDirectoryURL.path] UTF8String];
+        self.cookieAuthFileLocation = cookieAuthFileDir;
+        NSLog(@"%s", cookieAuthFileLocation);
         
     }
     
@@ -142,21 +149,25 @@ NSString * const kOnionKitStoppedNotification = @"kOnionKitStoppedNotification";
 {
     [[NSFileManager defaultManager] createDirectoryAtURL:_dataDirectoryURL withIntermediateDirectories:YES attributes:0 error:NULL];
     // Configure basics
-    char *argv[8];
-    int argc = 3;
+    char *argv[15];
+    int argc = 15;
     argv[0] = "torkit";
     argv[1] = "SOCKSPort";
     argv[2] = (char *)[[NSString stringWithFormat:@"%lu", (unsigned long)_port] UTF8String];
     argv[3] = "DataDirectory";
     argv[4] = (char *)[_dataDirectoryURL.path UTF8String];
-//#ifdef DEBUG
-    argc = 7;
     argv[5] = "DisableDebuggerAttachment";
     argv[6] = "0";
-//#else
-//    argc = 4;
-//    argv[3] = "--quiet";
-//#endif //DEBUG
+    argv[7] = "CookieAuthFile";
+    argv[8] = (char *)[[NSString stringWithFormat:@"%@/cookie_auth_file", _dataDirectoryURL.path] UTF8String];
+    argv[9] = "CookieAuthentication";
+    argv[10] = "1";
+    argv[11] = "CookieAuthFileGroupReadable";
+    argv[12] = "1";
+    argv[13] = "ControlPort";
+    argv[14] = "9150";
+
+    
     
     
     update_approx_time(time(NULL));

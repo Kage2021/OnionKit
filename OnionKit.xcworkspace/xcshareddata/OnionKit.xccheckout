@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>D74EF853-FD01-4DE8-805A-908A7B3DCB3D</string>
+	<key>IDESourceControlProjectName</key>
+	<string>OnionKit</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>399D1B7A-F999-4A0F-9AB3-C897DB07E84F</key>
+		<string>https://github.com/Kage2021/OnionKit.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>OnionKit.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>399D1B7A-F999-4A0F-9AB3-C897DB07E84F</key>
+		<string>..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/Kage2021/OnionKit.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>399D1B7A-F999-4A0F-9AB3-C897DB07E84F</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>399D1B7A-F999-4A0F-9AB3-C897DB07E84F</string>
+			<key>IDESourceControlWCCName</key>
+			<string>OnionKit</string>
+		</dict>
+	</array>
+</dict>
+</plist>
