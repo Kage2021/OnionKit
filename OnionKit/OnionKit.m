@@ -168,8 +168,6 @@ NSString * const kOnionKitStoppedNotification = @"kOnionKitStoppedNotification";
     argv[14] = "9150";
 
     
-    
-    
     update_approx_time(time(NULL));
     tor_threads_init();
     init_logging();

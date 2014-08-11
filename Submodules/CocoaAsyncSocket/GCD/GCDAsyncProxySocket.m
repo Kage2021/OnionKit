@@ -262,7 +262,9 @@
 	//XMPPLogTrace();
 	
 	// Start the SOCKS protocol stuff
-	[self socksOpen];
+    
+    /* I can't figure out how to override the socksOpen in my delegate so I keep writing bullshit to the TOR control port when trying to open a controller. No good. Implement socks open manually. The controller don't wanna hear that shit */
+//	[self socksOpen];
 }
 
 - (void) socket:(GCDAsyncSocket *)sock didReadPartialDataOfLength:(NSUInteger)partialLength tag:(long)tag {

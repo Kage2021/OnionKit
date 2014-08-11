@@ -9,6 +9,7 @@
 #import "TORRootViewController.h"
 #import "GCDAsyncProxySocket.h"
 #import "OnionKit.h"
+#import "torController.h"
 
 NSString * const kHITorManagerIsRunningKey = @"isRunning";
 NSString * const CONNECTING_STRING = @"Connecting to Tor...";
@@ -54,6 +55,12 @@ uint16_t const torControllerPort = 9150;
 
 - (void) testButtonPressed:(id)sender {
     
+   // torController *control = [[torController alloc] init];
+    
+    
+    
+    
+    
     //Start TOR control port listener on 9150
     
     self.socket = [[GCDAsyncProxySocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
@@ -70,21 +77,13 @@ uint16_t const torControllerPort = 9150;
     NSLog(@"Error initializing authcookie with cookie file: %@", error.userInfo);
     error = NULL;
     }
-    //setup dictionary that will be read to controller in order to authenticate us with the controller
- 
-    
-    NSDictionary *sslSettings = @{
-                                  @"Authenticate" : cookie,
-                                  };
-    
-    
-    [self.socket startTLS:sslSettings];
+
     [self.socket connectToHost:@"127.0.0.1" onPort:torControllerPort withTimeout:(-5) error:&error];
+
     if (error) {
         NSLog(@"Error connecting to host %@", error.userInfo);
     }
-        // set up listener socket for 250 verification. If received, fanfare and bells, hold connection open somehow. Start reading statuses an from TOR to ensure client functionality and start relay setup.
-
+    // Send TOR authenticate command. At this state the controller recognizes the attempt to connect and is waiting for the authenticate command and the cookie.
 }
 
 - (void)viewDidLoad
@@ -166,19 +165,7 @@ uint16_t const torControllerPort = 9150;
 
 #pragma mark GCDAsyncSocketDelegate methods
 
-//may not need this.
-/*
--(NSTimeInterval) socket:(GCDAsyncSocket *)sock shouldTimeoutReadWithTag:(long)tag elapsed:(NSTimeInterval)elapsed bytesDone:(NSUInteger)length
-{
-    NSTimeInterval *extension = NULL;
-    
-    if ((tag == 10100) || (tag == 10200))
-    {
-        *extension = 20;
-    }
-    return *extension;
-}
-*/
+
 - (void) socket:(GCDAsyncSocket *)sock didConnectToHost:(NSString *)host port:(uint16_t)port {
     NSLog(@"%@ connected to %@ on port %d", sock, host, port);
     [sock startTLS:nil];
@@ -191,10 +178,10 @@ uint16_t const torControllerPort = 9150;
 
 - (void) socketDidSecure:(GCDAsyncSocket *)sock {
     NSLog(@"socket secured: %@", sock);
-    NSString *requestString = [NSString stringWithFormat:@"GET / HTTP/1.1\r\nhost: %@\r\n\r\n", kTorCheckHost];
-    NSData *data = [requestString dataUsingEncoding:NSUTF8StringEncoding];
+   // NSString *requestString = [NSString stringWithFormat:@"GET / HTTP/1.1\r\nhost: %@\r\n\r\n", kTorCheckHost];
+   // NSData *data = [requestString dataUsingEncoding:NSUTF8StringEncoding];
     [sock readDataWithTimeout:-1 tag:1];
-    [sock writeData:data withTimeout:-1 tag:0];
+   // [sock writeData:data withTimeout:-1 tag:0];
 
 }
 
