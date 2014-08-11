@@ -72,6 +72,11 @@ uint16_t const torControllerPort = 9150;
     
    
      NSString *cookie = [[NSString alloc] initWithContentsOfFile:([OnionKit sharedInstance].cookieAuthFileLocation) encoding:NSASCIIStringEncoding error:&error];
+    
+ //   NSString *authString = [(@"\"AUTHENTICATE\" \"%@\"", cookie);
+ //   NSLog(@"%@", authString);
+    
+    
     if (error)
     {
     NSLog(@"Error initializing authcookie with cookie file: %@", error.userInfo);
