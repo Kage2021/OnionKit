@@ -22,6 +22,8 @@ extern NSString * const kOnionKitStoppedNotification; //<< Notification informin
 @property (nonatomic, readonly, getter = isRunning) BOOL isRunning;                  //<< Flag informing that the server is currently running
 @property (nonatomic, copy) NSURL *dataDirectoryURL;                                 //<< Where the tor data should be kept
 @property (nonatomic, strong) NSString *cookieAuthFileLocation;
+
+@property (nonatomic, strong, getter = getAuthCookie) NSString *cookie;
 /** Class method returning defult tor manager.
  *
  * Please not that you shouldn't been creating 

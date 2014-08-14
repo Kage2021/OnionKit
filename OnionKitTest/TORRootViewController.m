@@ -68,29 +68,102 @@ uint16_t const torControllerPort = 9150;
     NSError *error = NULL;
     
     
-    //try to get TOR auth_cookie_file for authenticating controller and setting up SSL settings
+    //try to get TOR auth_cookie_file for authenticating controller
     
+    // const char *cookieChar =
+    
+    
+    
+     NSData *rawCookie = [NSData dataWithContentsOfFile:([OnionKit sharedInstance]).cookieAuthFileLocation];
+    
+
+    
+   // NSString *cookie = [[NSString alloc] initWithContentsOfFile:([OnionKit sharedInstance].cookieAuthFileLocation) encoding:(enc) error:&error];
+    
+    
+    
+    NSString *hexCookie = [self stringToHex:(rawCookie)];
+    
+    NSString *testHexBackToASCII = [self stringFromHex:hexCookie];
+    
+    NSMutableString *auth = [[NSMutableString alloc] init];
+    
+    [auth appendString:(@"AUTHENTICATE ")];
+    
+    [auth appendString:(@"%@", hexCookie)];
+    
+    [auth appendString:(@"\r\n")];
+    
+    NSString *authCommand = auth;
+    
+    NSLog(@"Auth Command looks like %@", authCommand);
    
-     NSString *cookie = [[NSString alloc] initWithContentsOfFile:([OnionKit sharedInstance].cookieAuthFileLocation) encoding:NSASCIIStringEncoding error:&error];
+    
+    
+    
+ //   NSLog(@" Hex Cookie String %@", hexCookie);
+    
+  //  NSLog(@"Hex Cookie Back to Cookie String %@", testHexBackToASCII);
+    
     
  //   NSString *authString = [(@"\"AUTHENTICATE\" \"%@\"", cookie);
- //   NSLog(@"%@", authString);
+ //Full   NSLog(@"%@", authString);
     
     
-    if (error)
-    {
-    NSLog(@"Error initializing authcookie with cookie file: %@", error.userInfo);
-    error = NULL;
-    }
+
+    
 
     [self.socket connectToHost:@"127.0.0.1" onPort:torControllerPort withTimeout:(-5) error:&error];
-
+    if (error)
+    {
+        NSLog(@"Connection error: %@", error.userInfo);
+        error = NULL;
+    }
+    [self.socket writeData:([authCommand dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:NO]) withTimeout:-1 tag:9150];
+    [self.socket readDataWithTimeout:-1 tag:9152];
+    
     if (error) {
         NSLog(@"Error connecting to host %@", error.userInfo);
     }
+    error = NULL;
+    
+
+    
+
+    
+    
     // Send TOR authenticate command. At this state the controller recognizes the attempt to connect and is waiting for the authenticate command and the cookie.
 }
 
+-(NSString *)stringToHex:(NSData *)String
+{
+    NSUInteger len = [String length];
+    char * chars = (char *)[String bytes];
+    NSMutableString * hexString = [[NSMutableString alloc] init];
+    
+    for (NSUInteger i = 0; i < len; i++)
+    {
+        [hexString appendString:[NSString stringWithFormat:@"%0.2hhx", chars[i]]];
+    }
+    return hexString;
+}
+
+-(NSString *)stringFromHex:(NSString *)hexStr
+{
+    NSMutableData *stringData = [[NSMutableData alloc] init];
+    unsigned char whole_byte;
+    char byte_chars[3] = {'\0', '\0', '\0'};
+    int i;
+    for (i=0; i < [hexStr length] / 2; i++)
+    {
+        byte_chars[0] = [hexStr characterAtIndex:i*2];
+        byte_chars[1] = [hexStr characterAtIndex:i*2+1];
+        whole_byte = strtol(byte_chars, NULL, 16);
+        [stringData appendBytes:&whole_byte length:1];
+    }
+    return [[NSString alloc] initWithData:stringData encoding:NSASCIIStringEncoding];
+    
+}
 - (void)viewDidLoad
 {
     [super viewDidLoad];
