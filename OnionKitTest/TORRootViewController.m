@@ -24,6 +24,7 @@ NSString * const TEST_STRING = @"Test";
 NSString * const kTorCheckHost = @"check.torproject.org";
 uint16_t const kTorCheckPort = 443;
 uint16_t const torControllerPort = 9150;
+torController *controller;
 
 @interface TORRootViewController ()
 @property (nonatomic, strong) GCDAsyncProxySocket *socket;
@@ -49,121 +50,79 @@ uint16_t const torControllerPort = 9150;
         [[OnionKit sharedInstance] addObserver:self forKeyPath:kOnionKitStartedNotification options:NSKeyValueObservingOptionNew context:NULL];
         self.testButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
         [self.testButton addTarget:self action:@selector(testButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+        
+       
     }
     return self;
 }
 
 - (void) testButtonPressed:(id)sender {
     
-   // torController *control = [[torController alloc] init];
+ 
+    [controller startController];
     
     
     
     
     
-    //Start TOR control port listener on 9150
+/*
     
+    //Start TOR control port listener socket on 9150
     self.socket = [[GCDAsyncProxySocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
-    [self.socket setProxyHost:@"127.0.0.1" port:9150 version:GCDAsyncSocketSOCKSVersion5];
+    [self.socket setProxyHost:@"127.0.0.1" port:torControllerPort version:GCDAsyncSocketSOCKSVersion5];
     NSError *error = NULL;
     
     
+    
+    
+    
+    
+    
     //try to get TOR auth_cookie_file for authenticating controller
-    
-    // const char *cookieChar =
-    
-    
-    
      NSData *rawCookie = [NSData dataWithContentsOfFile:([OnionKit sharedInstance]).cookieAuthFileLocation];
     
-
     
-   // NSString *cookie = [[NSString alloc] initWithContentsOfFile:([OnionKit sharedInstance].cookieAuthFileLocation) encoding:(enc) error:&error];
-    
-    
-    
+    //convert cookie to hex string as desired by TOR Controller
     NSString *hexCookie = [self stringToHex:(rawCookie)];
     
-    NSString *testHexBackToASCII = [self stringFromHex:hexCookie];
     
+    //setup TOR Controller Authenticcation command
     NSMutableString *auth = [[NSMutableString alloc] init];
-    
     [auth appendString:(@"AUTHENTICATE ")];
-    
     [auth appendString:(@"%@", hexCookie)];
-    
     [auth appendString:(@"\r\n")];
-    
     NSString *authCommand = auth;
-    
     NSLog(@"Auth Command looks like %@", authCommand);
    
     
     
     
- //   NSLog(@" Hex Cookie String %@", hexCookie);
-    
-  //  NSLog(@"Hex Cookie Back to Cookie String %@", testHexBackToASCII);
-    
-    
- //   NSString *authString = [(@"\"AUTHENTICATE\" \"%@\"", cookie);
- //Full   NSLog(@"%@", authString);
-    
     
 
     
-
+    //connect to listener set up earlier on 9150
     [self.socket connectToHost:@"127.0.0.1" onPort:torControllerPort withTimeout:(-5) error:&error];
     if (error)
     {
         NSLog(@"Connection error: %@", error.userInfo);
         error = NULL;
     }
-    [self.socket writeData:([authCommand dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:NO]) withTimeout:-1 tag:9150];
-    [self.socket readDataWithTimeout:-1 tag:9152];
     
+    //Authenticate with that bitch
+    [self.socket writeData:([authCommand dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:NO]) withTimeout:-1 tag:9150];
+    
+    [self.socket readDataWithTimeout:-1 tag:9152];
+    //any errors?
     if (error) {
         NSLog(@"Error connecting to host %@", error.userInfo);
     }
     error = NULL;
-    
-
-    
-
+ 
+ */
     
     
-    // Send TOR authenticate command. At this state the controller recognizes the attempt to connect and is waiting for the authenticate command and the cookie.
 }
 
--(NSString *)stringToHex:(NSData *)String
-{
-    NSUInteger len = [String length];
-    char * chars = (char *)[String bytes];
-    NSMutableString * hexString = [[NSMutableString alloc] init];
-    
-    for (NSUInteger i = 0; i < len; i++)
-    {
-        [hexString appendString:[NSString stringWithFormat:@"%0.2hhx", chars[i]]];
-    }
-    return hexString;
-}
-
--(NSString *)stringFromHex:(NSString *)hexStr
-{
-    NSMutableData *stringData = [[NSMutableData alloc] init];
-    unsigned char whole_byte;
-    char byte_chars[3] = {'\0', '\0', '\0'};
-    int i;
-    for (i=0; i < [hexStr length] / 2; i++)
-    {
-        byte_chars[0] = [hexStr characterAtIndex:i*2];
-        byte_chars[1] = [hexStr characterAtIndex:i*2+1];
-        whole_byte = strtol(byte_chars, NULL, 16);
-        [stringData appendBytes:&whole_byte length:1];
-    }
-    return [[NSString alloc] initWithData:stringData encoding:NSASCIIStringEncoding];
-    
-}
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -205,7 +164,8 @@ uint16_t const torControllerPort = 9150;
     self.connectionStatusLabel.textColor = [UIColor orangeColor];
     if (![OnionKit sharedInstance].isRunning) {
         self.connectionStatusLabel.text = CONNECTING_STRING;
-        [[OnionKit sharedInstance] start];
+       controller = [[torController alloc] init];
+        [controller startTor];
     } else {
         self.connectionStatusLabel.text = DISCONNECTING_STRING;
         [[OnionKit sharedInstance  ] stop];
@@ -240,6 +200,36 @@ uint16_t const torControllerPort = 9150;
     // Dispose of any resources that can be recreated.
 }
 
+
+-(NSString *)stringToHex:(NSData *)String
+{
+    NSUInteger len = [String length];
+    char * chars = (char *)[String bytes];
+    NSMutableString * hexString = [[NSMutableString alloc] init];
+    
+    for (NSUInteger i = 0; i < len; i++)
+    {
+        [hexString appendString:[NSString stringWithFormat:@"%0.2hhx", chars[i]]];
+    }
+    return hexString;
+}
+
+-(NSString *)stringFromHex:(NSString *)hexStr
+{
+    NSMutableData *stringData = [[NSMutableData alloc] init];
+    unsigned char whole_byte;
+    char byte_chars[3] = {'\0', '\0', '\0'};
+    int i;
+    for (i=0; i < [hexStr length] / 2; i++)
+    {
+        byte_chars[0] = [hexStr characterAtIndex:i*2];
+        byte_chars[1] = [hexStr characterAtIndex:i*2+1];
+        whole_byte = strtol(byte_chars, NULL, 16);
+        [stringData appendBytes:&whole_byte length:1];
+    }
+    return [[NSString alloc] initWithData:stringData encoding:NSASCIIStringEncoding];
+    
+}
 
 #pragma mark GCDAsyncSocketDelegate methods
 

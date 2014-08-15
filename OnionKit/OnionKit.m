@@ -75,13 +75,16 @@ NSString * const kOnionKitStoppedNotification = @"kOnionKitStoppedNotification";
     if (self)
     {
         _port = 9050;
+        
+        //directory for setting up tor to run in the iphone app directory
         NSURL *appSupportURL = [[[[NSFileManager defaultManager] URLsForDirectory:NSApplicationSupportDirectory inDomains:NSUserDomainMask] lastObject] URLByAppendingPathComponent:@"com.something.different"];
         self.dataDirectoryURL = appSupportURL;
-        NSLog(@"%@", [appSupportURL absoluteString]);
+    
         
+        //location TOR will or has written the control auth cookie
         const char * cookieAuthFileDir = [[NSString stringWithFormat:@"%@/cookie_auth_file", _dataDirectoryURL.path] UTF8String];
         self.cookieAuthFileLocation = [NSString stringWithUTF8String:cookieAuthFileDir];
-        NSLog(@"%@", self.cookieAuthFileLocation);
+
         
     }
     
@@ -99,6 +102,8 @@ NSString * const kOnionKitStoppedNotification = @"kOnionKitStoppedNotification";
     _startupDate = [[NSDate alloc] initWithTimeIntervalSinceNow:0];
     _startupTimer = [NSTimer scheduledTimerWithTimeInterval:0.2 target:self selector:@selector(startupCheck:) userInfo:nil repeats:YES];
 }
+
+
 
 - (void)startupCheck:(NSTimer *)timer
 {
@@ -120,6 +125,8 @@ NSString * const kOnionKitStoppedNotification = @"kOnionKitStoppedNotification";
         }
     }
 }
+
+
 
 - (void)stop
 {
@@ -152,7 +159,9 @@ NSString * const kOnionKitStoppedNotification = @"kOnionKitStoppedNotification";
 - (void)runTor:(NSThread *)obj
 {
     [[NSFileManager defaultManager] createDirectoryAtURL:_dataDirectoryURL withIntermediateDirectories:YES attributes:0 error:NULL];
-    // Configure basics
+    
+    
+    // Pass the following initialization arguments to TOR to start with. Any parameters not passed will be loaded from the hard coded defaults because as of now, TOR can't find torrc in iphone folder structure. This is fine.
     char *argv[15];
     int argc = 15;
     argv[0] = "torkit";
@@ -176,6 +185,8 @@ NSString * const kOnionKitStoppedNotification = @"kOnionKitStoppedNotification";
     tor_threads_init();
     init_logging();
 
+    
+    
     // Main loop here
 
     if (tor_init(argc, argv)<0)
