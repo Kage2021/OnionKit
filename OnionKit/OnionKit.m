@@ -42,16 +42,29 @@ NSString * const kOnionKitStoppedNotification = @"kOnionKitStoppedNotification";
     NSTimer *_startupTimer;
     NSDate  *_startupDate;
 }
+
+
 @property (nonatomic, readonly) NSThread *torThread;
+
 
 - (void)runTor:(NSThread *)obj;
 - (void)startupCheck:(NSTimer *)timer;
+
+
 @end
 
+
+
+
+
 @implementation OnionKit
+
+
 @synthesize port = _port;
 @synthesize dataDirectoryURL = _dataDirectoryURL;
 @synthesize cookieAuthFileLocation;
+
+
 
 + (OnionKit *)sharedInstance
 {
@@ -84,12 +97,12 @@ NSString * const kOnionKitStoppedNotification = @"kOnionKitStoppedNotification";
         //location TOR will or has written the control auth cookie
         const char * cookieAuthFileDir = [[NSString stringWithFormat:@"%@/cookie_auth_file", _dataDirectoryURL.path] UTF8String];
         self.cookieAuthFileLocation = [NSString stringWithUTF8String:cookieAuthFileDir];
-
-        
     }
     
     return self;
 }
+
+
 
 - (void)start
 {
@@ -102,6 +115,8 @@ NSString * const kOnionKitStoppedNotification = @"kOnionKitStoppedNotification";
     _startupDate = [[NSDate alloc] initWithTimeIntervalSinceNow:0];
     _startupTimer = [NSTimer scheduledTimerWithTimeInterval:0.2 target:self selector:@selector(startupCheck:) userInfo:nil repeats:YES];
 }
+
+
 
 
 
@@ -128,6 +143,8 @@ NSString * const kOnionKitStoppedNotification = @"kOnionKitStoppedNotification";
 
 
 
+
+
 - (void)stop
 {
     if (!_torThread)
@@ -150,18 +167,22 @@ NSString * const kOnionKitStoppedNotification = @"kOnionKitStoppedNotification";
 }
 
 
+
+
 - (void)dealloc
 {
     [_startupTimer invalidate];
     [self stop];
 }
 
+
+
 - (void)runTor:(NSThread *)obj
 {
     [[NSFileManager defaultManager] createDirectoryAtURL:_dataDirectoryURL withIntermediateDirectories:YES attributes:0 error:NULL];
     
     
-    // Pass the following initialization arguments to TOR to start with. Any parameters not passed will be loaded from the hard coded defaults because as of now, TOR can't find torrc in iphone folder structure. This is fine.
+    // Pass the following initialization arguments to TOR to start with. These settings are configured for the Relay APP on the iphone.
     char *argv[15];
     int argc = 15;
     argv[0] = "torkit";
@@ -195,9 +216,13 @@ NSString * const kOnionKitStoppedNotification = @"kOnionKitStoppedNotification";
         return;
     }
     
+    
+    
     // Local main loop to support NSThread
     int loop_result;
     time_t now;
+    
+    
     
     /* initialize dns resolve map, spawn workers if needed */
     if (dns_init() < 0) {

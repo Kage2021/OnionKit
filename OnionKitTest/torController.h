@@ -14,15 +14,13 @@
 
 
 @property (nonatomic, strong) NSString *controllerStatus;
-
+@property (nonatomic, strong) NSString *checkTorReturnedIP;
 //flags for statuses
 
 @property (nonatomic, getter = isControllerUp) BOOL controllerUp;
+@property (nonatomic, getter = isClientUp) BOOL clientStat;
 
-@property (nonatomic, getter = isTorBootstrapped) BOOL *torStrapStat;
 
-@property (nonatomic, getter = isClientUp) BOOL *clientStat;                    
-//A TOR Controller
 
 -(void)startTor;
 -(void)startController;

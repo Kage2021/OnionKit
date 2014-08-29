@@ -114,8 +114,8 @@
 		33A092E61986AB00004D835E /* SOCKSProxySocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SOCKSProxySocket.m; path = Submodules/CocoaAsyncSocket/GCD/SOCKSProxySocket.m; sourceTree = "<group>"; };
 		33AA7E2F1985EE7300BA5DC6 /* OnionKit-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OnionKit-Prefix.pch"; sourceTree = "<group>"; };
 		68303120D1EE418A8A101CC1 /* Pods-OnionKit.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OnionKit.xcconfig"; path = "Pods/Pods-OnionKit.xcconfig"; sourceTree = "<group>"; };
-		74EC9E881996687B00C60FE7 /* torController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = torController.h; sourceTree = "<group>"; };
-		74EC9E891996687B00C60FE7 /* torController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = torController.m; sourceTree = "<group>"; };
+		74EC9E881996687B00C60FE7 /* torController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = torController.h; path = OnionKitTest/torController.h; sourceTree = SOURCE_ROOT; };
+		74EC9E891996687B00C60FE7 /* torController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = torController.m; path = OnionKitTest/torController.m; sourceTree = SOURCE_ROOT; };
 		8CCA41BB095B4562AA3339FA /* libPods-OnionKit.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-OnionKit.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D9B02A8118441991002CC51E /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto.a; path = dependencies/lib/libcrypto.a; sourceTree = SOURCE_ROOT; };
 		D9B02A8218441991002CC51E /* libcurve25519_donna.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcurve25519_donna.a; path = dependencies/lib/libcurve25519_donna.a; sourceTree = SOURCE_ROOT; };
@@ -926,6 +926,8 @@
 			children = (
 				D9C5D6BA183BEFEC0012262D /* OnionKit.h */,
 				D9C5D6BC183BEFEC0012262D /* OnionKit.m */,
+				74EC9E881996687B00C60FE7 /* torController.h */,
+				74EC9E891996687B00C60FE7 /* torController.m */,
 				D9C5D6B8183BEFEC0012262D /* Supporting Files */,
 			);
 			path = OnionKit;
@@ -977,8 +979,6 @@
 				D9C5D827183C14980012262D /* TORAppDelegate.m */,
 				D9C5DA00183C1ABF0012262D /* TORRootViewController.h */,
 				D9C5DA01183C1ABF0012262D /* TORRootViewController.m */,
-				74EC9E881996687B00C60FE7 /* torController.h */,
-				74EC9E891996687B00C60FE7 /* torController.m */,
 				D9C5D829183C14980012262D /* Images.xcassets */,
 				D9C5D81E183C14980012262D /* Supporting Files */,
 			);

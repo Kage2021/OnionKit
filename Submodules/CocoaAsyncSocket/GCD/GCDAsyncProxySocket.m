@@ -10,9 +10,9 @@
 
 #import "DDLog.h"
 #if DEBUG
-    static const int ddLogLevel = LOG_LEVEL_VERBOSE;
+static const int ddLogLevel = LOG_LEVEL_VERBOSE;
 #else
-    static const int ddLogLevel = LOG_LEVEL_OFF;
+static const int ddLogLevel = LOG_LEVEL_OFF;
 #endif
 
 
@@ -93,9 +93,9 @@
 - (void) startTLS:(NSDictionary *)tlsSettings {
     NSMutableDictionary *settings = [NSMutableDictionary dictionaryWithDictionary:tlsSettings];
     /*
-    NSString *peerName = self.destinationHost;
-    [settings setObject:peerName forKey:(NSString *)kCFStreamSSLPeerName];
-    */
+     NSString *peerName = self.destinationHost;
+     [settings setObject:peerName forKey:(NSString *)kCFStreamSSLPeerName];
+     */
     [self.proxySocket startTLS:settings];
 }
 
@@ -184,6 +184,7 @@
 	NSUInteger byteBufferLength = (uint)(4 + 1 + hostLength + 2);
 	uint8_t *byteBuffer = malloc(byteBufferLength * sizeof(uint8_t));
     NSUInteger offset = 0;
+
 	
     // VER
 	uint8_t version = 0x05;
@@ -194,7 +195,7 @@
      o  CONNECT X'01'
      o  BIND X'02'
      o  UDP ASSOCIATE X'03'
-    */
+     */
 	uint8_t command = 0x01;
     byteBuffer[offset] = command;
     offset++;
@@ -205,7 +206,7 @@
      o  IP V4 address: X'01'
      o  DOMAINNAME: X'03'
      o  IP V6 address: X'04'
-    */
+     */
 	uint8_t addressType = 0x03;
     byteBuffer[offset] = addressType;
     offset++;
@@ -224,7 +225,7 @@
     NSUInteger portLength = 2;
 	memcpy(byteBuffer+offset, &port, portLength);
     offset+=portLength;
-
+    
 	NSData *data = [NSData dataWithBytesNoCopy:byteBuffer length:byteBufferLength freeWhenDone:YES];
 	DDLogVerbose(@"TURNSocket: SOCKS_CONNECT: %@", data);
 	
@@ -258,13 +259,27 @@
 
 - (void)socket:(GCDAsyncSocket *)sock didConnectToHost:(NSString *)host port:(UInt16)port
 {
+        UInt16 controlPort = 9150;
+    
     DDLogInfo(@"proxySocket did connect to %@:%d", host, port);
 	//XMPPLogTrace();
 	
 	// Start the SOCKS protocol stuff
+
+    //This Method Has been edited for the TOR Relay Application so that it would quit trying to call socksOpen on the TOR Controller
+    if ([host isEqualToString:@"127.0.0.1"])
+    {
+        if (!(port == controlPort))
+            {
+                [self socksOpen];
+            }
+
+	}
     
-    /* I can't figure out how to override the socksOpen in my delegate so I keep writing bullshit to the TOR control port when trying to open a controller. No good. Implement socks open manually. The controller don't wanna hear that shit */
-//	[self socksOpen];
+    else if (![host isEqualToString:@"127.0.0.1"])
+    {
+        [self socksOpen];
+    }
 }
 
 - (void) socket:(GCDAsyncSocket *)sock didReadPartialDataOfLength:(NSUInteger)partialLength tag:(long)tag {
@@ -342,8 +357,8 @@
 				DDLogVerbose(@"TURNSocket: portLength: %o", portLength);
 				
 				[self.proxySocket readDataToLength:(addrLength+portLength)
-								  withTimeout:TIMEOUT_READ
-										  tag:SOCKS_CONNECT_REPLY_2];
+                                       withTimeout:TIMEOUT_READ
+                                               tag:SOCKS_CONNECT_REPLY_2];
 			} else if (addressType == 4) { // IPv6
                 [self.proxySocket readDataToLength:(16+portLength) withTimeout:TIMEOUT_READ tag:SOCKS_CONNECT_REPLY_2];
             } else if (addressType == 0) {
@@ -411,7 +426,7 @@
         if (self.delegate && [self.delegate respondsToSelector:@selector(socket:didReadData:withTag:)]) {
             dispatch_async(self.delegateQueue, ^{
                 @autoreleasepool {
-                    [self.delegate socket:self didReadData:data withTag:-1];
+                    [self.delegate socket:self didReadData:data withTag:tag];
                 }
             });
         }
@@ -434,7 +449,7 @@
 
 - (void)socketDidDisconnect:(GCDAsyncSocket *)sock withError:(NSError *)err {
     DDLogVerbose(@"proxySocket disconnected from proxy %@:%d / destination %@:%d", self.proxyHost, self.proxyPort, self.destinationHost, self.self.destinationPort);
-
+    
     if (self.delegate && [self.delegate respondsToSelector:@selector(socketDidDisconnect:withError:)]) {
         dispatch_async(self.delegateQueue, ^{
             @autoreleasepool {
